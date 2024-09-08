@@ -5,19 +5,19 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 # データを取得するための関数
-def get_discord_id_and_api_key(discord_id):
+def get_discord_id_and_time(discord_id):
     try:
         # DynamoDBテーブルを指定
         table = dynamodb.Table('dev_insight')
 
-        # DynamoDBからデータを取得（キーとしてuser_idを使用）
+        # DynamoDBからデータを取得（キーとしてdiscord_idを使用）
         response = table.get_item(
             Key={
                 'discord_id': discord_id
             }
         )
 
-        # レスポンスからDiscord IDとAPIキーを取得
+        # レスポンスからDiscord IDとtimeを取得
         if 'Item' in response:
             discord_id = response['Item'].get('discord_ID')
             time = response['Item'].get('timestamp')
@@ -33,8 +33,8 @@ def get_discord_id_and_api_key(discord_id):
         return None, None
 
 # 取得したデータを使って処理を行う
-discord_id_id = 'sample-user-id'
-discord_id, time = get_discord_id_and_api_key(discord_id)
+discord_id = 'sample-user-id'
+discord_id, time = get_discord_id_and_time(discord_id)
 
 if discord_id and time:
     print(f"Discord ID: {discord_id}, Time: {time}")
