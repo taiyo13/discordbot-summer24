@@ -2,26 +2,26 @@ import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 # DynamoDBにアクセスするためのクライアントを作成
-dynamodb = boto3.resource('dynamodb', region_name='your-region')
+dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 # データを取得するための関数
-def get_discord_id_and_api_key(user_id):
+def get_discord_id_and_api_key(discord_id):
     try:
         # DynamoDBテーブルを指定
-        table = dynamodb.Table('your-table-name')
+        table = dynamodb.Table('dev_insight')
 
         # DynamoDBからデータを取得（キーとしてuser_idを使用）
         response = table.get_item(
             Key={
-                'user_id': user_id
+                'discord_id': discord_id
             }
         )
 
         # レスポンスからDiscord IDとAPIキーを取得
         if 'Item' in response:
-            discord_id = response['Item'].get('DiscordID')
-            api_key = response['Item'].get('ApiKey')
-            return discord_id, api_key
+            discord_id = response['Item'].get('discord_ID')
+            time = response['Item'].get('timestamp')
+            return discord_id, time
         else:
             return None, None
 
@@ -33,10 +33,10 @@ def get_discord_id_and_api_key(user_id):
         return None, None
 
 # 取得したデータを使って処理を行う
-user_id = 'sample-user-id'
-discord_id, api_key = get_discord_id_and_api_key(user_id)
+discord_id_id = 'sample-user-id'
+discord_id, time = get_discord_id_and_api_key(discord_id)
 
-if discord_id and api_key:
-    print(f"Discord ID: {discord_id}, API Key: {api_key}")
+if discord_id and time:
+    print(f"Discord ID: {discord_id}, Time: {time}")
 else:
     print("Data not found.")
